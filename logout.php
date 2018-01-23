@@ -1,3 +1,4 @@
+<link rel="icon" href="facebook-icon-preview-1-400x400.png"/>
 <?php
     session_start();
     if(isset($_POST['btn_logout']))
@@ -12,3 +13,4 @@
         }
      }
 ?>
+

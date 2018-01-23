@@ -3,13 +3,13 @@
     include "connection.php";
     if(isset($_POST['btn_login']))
     {
-        $txtusername=$_POST['email'];
-        $txtpassword=$_POST['password'];
+        $txtusername=mysqli_real_escape_string($conn,$_POST['email']);
+        $txtpassword=mysqli_real_escape_string($conn,$_POST['password']);
 
         $sql="select * from tbllogin where username='$txtusername' and password='$txtpassword'";
 
         $sql1="select * from tbluser where username='$txtusername' and password='$txtpassword'";
-
+//        $sql8=sqlsrv_query()
         $res=mysqli_query($conn,$sql) or die("Query Failed");
 
         if(mysqli_num_rows($res)>0)

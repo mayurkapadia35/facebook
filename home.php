@@ -38,9 +38,6 @@
             margin-left: 50%;
             font-size: x-large;
         }
-
-
-
     </style>
 </head>
 <body>
@@ -48,7 +45,6 @@
 <form action="" method="post" enctype="multipart/form-data">
 <div id="header">
         <input type="submit" name="btn_logout" value="Logout" style="margin-left: 95%">
-
 </div>
     <div>
         <input type="button" name="post" value="Post" id="btn_post" style="margin-left: 50%;">
@@ -58,52 +54,73 @@
         <table align="center">
             <tr>
                 <td>Select Image</td>
-                <td><input type="file" name="fileupload"/></td>
+                <td><input type="file" required name="fileupload"/></td>
             </tr>
             <tr>
                 <td></td>
-                <td><textarea name="postcomment" placeholder="Write Something"></textarea></td>
+                <td><textarea name="postcomment" required placeholder="Write Something"></textarea></td>
             </tr>
             <tr>
                 <td></td>
-                <td><input type="submit" name="post_submit" value="Save"></td>
+                <td><input type="submit" name="post_submit" id="post_submit" value="Save"></td>
             </tr>
         </table>
     </div>
     <div id="timeline">
 
             <?php
+                $count;
                 $userid=$_SESSION['userid'];
                 $sql="select * from tblpost where userid='$userid'";
                 $res=mysqli_query($conn,$sql) or die("select post query failed");
+
                 if(mysqli_num_rows($res)>0) {
                     while ($row = mysqli_fetch_array($res)) {
+
+                        $sql1="select count(likeid) from tbllike where postid='$row[0]'";
+                        $res1=mysqli_query($conn,$sql1) or die("select post query failed");
+                            if(mysqli_num_rows($res1)>0)
+                            {
+                                while($row1=mysqli_fetch_array($res1))
+                                {
+                                    $count=$row1[0];
+                                }
+                            }
                         ?>
                         <div style="margin-left: 50%;"><span><?php echo $_SESSION['firstname']." ".$_SESSION['lastname']; ?></span></div>
                         <div style="margin-left: 50%;"><span><?php echo $row[2]; ?></span></div>
                         <div style="margin-left: 50%;"><img src="images/<?php echo $row[3]; ?>" height="150px" width="150px"></div>
-                        <div><span><img src="36-.jpg" width="50px" height="50px"></span>    </div>
+                        <div><span><button type="button" id="btn_like" onclick="likefun(<?php echo $userid;?>,<?php echo $row[0];?>);"><img src="36-.jpg" width="50px" height="50px"></button></span><span id="likedata"><?php echo $count; ?></span></div>
                         <?php
                     }
                 }
             ?>
-
-
     </div>
 </form>
-<!--</form>
-<span style="margin-left: 97%;" title="logout"><a href="logout.php" name="btn_logout"><img src="download.png" height="50px" width="50px"></a></span>-->
 </body>
 </html>
         <script>
+            var count=0;
             $(document).ready(function () {
                 $("#btn_post").click(function () {
                     $("#post").slideToggle("slow");
                 });
             });
+
+            $("#")
+            function likefun(userid,postid) {
+                $.ajax({
+                    type: "post",
+                    url: "insertlike.php",
+                    data:{userid:userid,postid:postid},
+                    success:function (data) {
+                        $("#likedata").html(data);
+                        window.location.reload();
+                    }
+                });
+            }
         </script>
 <?php
-
         if(isset($_POST['post_submit']))
         {
             if(isset($_FILES['fileupload']))
@@ -139,6 +156,5 @@
                 $res=mysqli_query($conn,$sql) or die("Connection Failed in uploading");
             }
         }
-
 }
 ?>
